@@ -1,0 +1,40 @@
+/* Importing Google Font */
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap");
+
+/* Import TailwindCSS */
+@import "tailwindcss";
+
+/* Custom theme variables */
+@theme{
+  --color-primary: #f84565;
+  --color-primary-dull: #D63854;
+}
+
+/* Global Styles */
+* {
+  font-family: "Outfit", sans-serif;
+  scrollbar-width: thin; /* For Firefox */
+  scrollbar-color: #787777 #1e1e1e; /* For Firefox */
+}
+
+/* Body Styles */
+body {
+  color: white;
+  background-color: #09090B;
+}
+
+/* Remove scrollbar (for browsers that support it) */
+.no-scrollbar {
+  scrollbar-width: none; /* For Firefox */
+  -ms-overflow-style: none; /* For IE/Edge */
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
+
+
