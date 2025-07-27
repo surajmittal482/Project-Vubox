@@ -106,7 +106,7 @@ try {
       data: { bookingId: booking._id.toString() },
     }),
     new Promise((_, reject) =>
-      setTimeout(() => reject(new Error("Inngest timeout")), 2000)
+      setTimeout(() => reject(new Error("Inngest timeout")), 5000)
     ),
   ]);
   console.log("Inngest scheduled successfully");
