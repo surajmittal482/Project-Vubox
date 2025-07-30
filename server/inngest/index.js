@@ -6,7 +6,7 @@ import sendEmail from "../configs/nodeMailer.js";
 // Create a client to send and receive events
 export const inngest = new Inngest({ id: "movie-ticket-booking" });
 
-const image_base_url = import.meta.env.VITE_TMDB_IMAGE_BASE_URL;
+const image_base_url = process.env.VITE_TMDB_IMAGE_BASE_URL;
 
 // Ingest Function to save user data to a database
 const syncUserCreation = inngest.createFunction(
@@ -104,6 +104,11 @@ const sendBookingConfirmationEmail = inngest.createFunction(
         .populate("user");
 
       // Prepare the email body with dynamic values from the booking
+    // Prepare poster URL with fallback
+    const posterUrl = booking?.show?.movie?.posterUrl 
+      ? `${image_base_url}${booking.show.movie.posterUrl}` 
+      : 'https://via.placeholder.com/150';
+
     const emailBody = `
   <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: auto; background-color: #f8f9fa; padding: 30px; color: #2c3e50; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
     <div style="background: linear-gradient(135deg, #7D3C98 0%, #9B59B6 100%); padding: 30px; border-radius: 12px; text-align: center; color: white; margin-bottom: 25px;">
@@ -114,10 +119,10 @@ const sendBookingConfirmationEmail = inngest.createFunction(
 
     <div style="background: white; padding: 25px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
       <div style="text-align: center; margin-bottom: 25px;">
-        <img src="${image_base_url+booking?.show?.movie?.posterUrl || 'https://via.placeholder.com/150'}" 
+        <img src="${posterUrl}" 
              alt="${booking?.show?.movie?.title || 'Movie'} Poster" 
-             style="width: 180px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"/>
-      </div>
+             style="width: 180px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"
+             onerror="this.onerror=null; this.src='https://via.placeholder.com/150'"/>
 
       <table style="width: 100%; border-collapse: separate; border-spacing: 0 12px; font-size: 16px;">
         <tr>
@@ -261,23 +266,51 @@ const sendShowReminders = inngest.createFunction(
             to: task.userEmail,
             subject: `Reminder: Your movie "${task.movieTitle}" starts soon!`,
             body: `
-        <div style="font-family: Arial, sans-serif; padding: 20px;">
-          <h2>Hello ${task.userName},</h2>
-          <p>This is a quick reminder that your movie:</p>
-          <h3 style="color: #F84565;">${task.movieTitle}</h3>
-          <p>
-            is scheduled for <strong>${new Date(
-              task.showTime
-            ).toLocaleDateString("en-US", {
-              timeZone: "Asia/Kolkata",
-            })}</strong> at 
-            <strong>${new Date(task.showTime).toLocaleTimeString("en-US", {
-              timeZone: "Asia/Kolkata",
-            })}</strong>.
+        <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: auto; background-color: #f8f9fa; padding: 30px; color: #2c3e50; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+          <div style="background: linear-gradient(135deg, #7D3C98 0%, #9B59B6 100%); padding: 25px; border-radius: 12px; text-align: center; color: white; margin-bottom: 25px;">
+            <h1 style="margin: 0; font-size: 32px; font-weight: 600;">🎬 VUBOX</h1>
+            <h2 style="margin: 15px 0 5px; font-size: 24px; font-weight: 500;">Movie Reminder</h2>
+          </div>
+
+          <div style="background: white; padding: 25px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+            <h2 style="color: #2c3e50; margin-top: 0;">Hello ${task.userName},</h2>
+            <p style="font-size: 16px; color: #666;">This is a friendly reminder about your upcoming movie:</p>
+            
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
+              <h3 style="color: #7D3C98; margin: 0 0 15px 0;">${task.movieTitle}</h3>
+              <p style="margin: 8px 0; color: #2c3e50;">
+                <strong>Date:</strong> ${new Date(task.showTime).toLocaleDateString("en-US", {
+                  weekday: 'long',
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                  timeZone: 'Asia/Kolkata'
+                })}
+              </p>
+              <p style="margin: 8px 0; color: #2c3e50;">
+                <strong>Time:</strong> ${new Date(task.showTime).toLocaleTimeString("en-US", {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                  timeZone: 'Asia/Kolkata'
+                })}
+              </p>
+            </div>
+
+            <p style="color: #e74c3c; font-weight: 500; text-align: center; margin: 25px 0;">
+              ⏰ Starts in approximately <strong>8 hours</strong>
+            </p>
+
+            <hr style="border: none; border-top: 1px solid #eee; margin: 25px 0;" />
+
+            <p style="text-align: center; color: #2c3e50; margin: 0;">
+              We hope you enjoy the show! 🍿<br/>
+              <span style="font-size: 14px; color: #666;">Best regards,<br/>The VUBOX Team</span>
+            </p>
+          </div>
+
+          <p style="text-align: center; font-size: 13px; color: #666; margin-top: 20px;">
+            This is an automated reminder. Please do not reply.
           </p>
-          <p>It starts in approximately <strong>8 hours</strong> - make sure you're ready!</p>
-          <br/>
-          <p>Enjoy the show!<br/>QuickShow Team</p>
         </div>
       `,
           })
