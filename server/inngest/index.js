@@ -102,48 +102,92 @@ const sendBookingConfirmationEmail = inngest.createFunction(
         .populate("user");
 
       // Prepare the email body with dynamic values from the booking
-      const emailBody = `
-  <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; background: #f8f9fa; padding: 20px; color: #333;">
-    <div style="background: #7D3C98; color: white; padding: 30px 20px; border-radius: 10px 10px 0 0; text-align: center;">
-      <h1 style="margin: 0; font-size: 28px;">🎟️ VUBOX</h1>
-      <h2 style="margin: 10px 0;">Yaay!! Your Booking is Confirmed! 🎉</h2>
-      <p style="margin: 5px 0; font-size: 16px;">Booking ID: <strong>${booking.bookingId}</strong></p>
+    const emailBody = `
+  <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: auto; background-color: #f8f9fa; padding: 30px; color: #2c3e50; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+    <div style="background: linear-gradient(135deg, #7D3C98 0%, #9B59B6 100%); padding: 30px; border-radius: 12px; text-align: center; color: white; margin-bottom: 25px;">
+      <h1 style="margin: 0; font-size: 32px; font-weight: 600;">🎬 VUBOX</h1>
+      <h2 style="margin: 15px 0 5px; font-size: 24px; font-weight: 500;">Booking Confirmed! 🎉</h2>
+      <p style="margin: 10px 0; font-size: 16px; opacity: 0.9;">Booking ID: <strong>${booking?.bookingId || "N/A"}</strong></p>
     </div>
 
-    <div style="background: #fff3cd; border: 1px solid #ffeeba; padding: 20px; border-radius: 0 0 10px 10px;">
-      <div style="display: flex; flex-direction: row; gap: 15px;">
-        <img src="${booking.show.movie.posterUrl}" alt="${booking.show.movie.title}" style="width: 120px; height: auto; border-radius: 6px; object-fit: cover;" />
-        <div>
-          <h3 style="margin: 0 0 8px 0;">${booking.show.movie.title} (${booking.show.format})</h3>
-          <p style="margin: 0;">
-            <strong>🕒 Time:</strong> ${new Date(
-              booking.show.showDateTime
-            ).toLocaleTimeString("en-US", { timeZone: "Asia/Kolkata" })}<br/>
-            <strong>📅 Date:</strong> ${new Date(
-              booking.show.showDateTime
-            ).toLocaleDateString("en-US", { timeZone: "Asia/Kolkata", weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}<br/>
-            <strong>📍 Location:</strong> ${booking.show.theatre}, ${booking.show.city}<br/>
-            <strong>🪑 Seats:</strong> ${booking.seats.join(", ")}<br/>
-            <strong>🎬 Screen:</strong> ${booking.show.screen}
-          </p>
-        </div>
+    <div style="background: white; padding: 25px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+      <div style="text-align: center; margin-bottom: 25px;">
+        <img src="${booking?.show?.movie?.posterUrl || 'https://via.placeholder.com/150'}" 
+             alt="${booking?.show?.movie?.title || 'Movie'} Poster" 
+             style="width: 180px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"/>
       </div>
 
-      <div style="margin-top: 20px; text-align: center;">
-        <a  style="background-color: #7D3C98; color: white; text-decoration: none; padding: 12px 24px; border-radius: 5px; display: inline-block; font-weight: bold;">Open in App</a>
+      <table style="width: 100%; border-collapse: separate; border-spacing: 0 12px; font-size: 16px;">
+        <tr>
+          <td style="color: #666; padding: 8px 15px; width: 30%;"><strong>Movie</strong></td>
+          <td style="padding: 8px 15px; background: #f8f9fa; border-radius: 6px;">
+            ${booking?.show?.movie?.title || 'N/A'} 
+            <span style="color: #7D3C98; font-weight: 500;">(${booking?.show?.format || '2D'})</span>
+          </td>
+        </tr>
+        <tr>
+          <td style="color: #666; padding: 8px 15px;"><strong>Date</strong></td>
+          <td style="padding: 8px 15px; background: #f8f9fa; border-radius: 6px;">
+            ${new Date(booking?.show?.showDateTime).toLocaleDateString("en-IN", { 
+              weekday: 'long', 
+              year: 'numeric', 
+              month: 'long', 
+              day: 'numeric', 
+              timeZone: 'Asia/Kolkata' 
+            })}
+          </td>
+        </tr>
+        <tr>
+          <td style="color: #666; padding: 8px 15px;"><strong>Time</strong></td>
+          <td style="padding: 8px 15px; background: #f8f9fa; border-radius: 6px;">
+            ${new Date(booking?.show?.showDateTime).toLocaleTimeString("en-IN", { 
+              hour: '2-digit', 
+              minute: '2-digit', 
+              timeZone: 'Asia/Kolkata' 
+            })}
+          </td>
+        </tr>
+        <tr>
+          <td style="color: #666; padding: 8px 15px;"><strong>Theatre</strong></td>
+          <td style="padding: 8px 15px; background: #f8f9fa; border-radius: 6px;">
+            ${booking?.show?.theatre || 'N/A'}${booking?.show?.city ? `, ${booking?.show?.city}` : ''}
+          </td>
+        </tr>
+        <tr>
+          <td style="color: #666; padding: 8px 15px;"><strong>Screen</strong></td>
+          <td style="padding: 8px 15px; background: #f8f9fa; border-radius: 6px;">
+            ${booking?.show?.screen || 'N/A'}
+          </td>
+        </tr>
+        <tr>
+          <td style="color: #666; padding: 8px 15px;"><strong>Seats</strong></td>
+          <td style="padding: 8px 15px; background: #f8f9fa; border-radius: 6px;">
+            ${(booking?.seats || []).join(', ') || 'N/A'}
+          </td>
+        </tr>
+      </table>
+
+      <div style="margin-top: 30px; text-align: center;">
+        <a href="${booking?.appLink || '#'}" 
+           style="display: inline-block; background: linear-gradient(135deg, #7D3C98 0%, #9B59B6 100%); 
+                  color: white; padding: 14px 32px; border-radius: 8px; text-decoration: none; 
+                  font-weight: 500; transition: transform 0.2s; box-shadow: 0 2px 8px rgba(125,60,152,0.3);">
+          View Booking in App
+        </a>
       </div>
     </div>
 
-    <p style="margin-top: 30px; font-size: 14px; color: #666; text-align: center;">
-      Thank you for booking with <strong>Vubox</strong>! We hope you enjoy the show! 🍿
-    </p>
-
-    <p style="text-align: center; font-size: 12px; color: #aaa;">
-      This is an automated message. Please do not reply directly.
-    </p>
+    <div style="margin-top: 30px; text-align: center; color: #2c3e50;">
+      <p style="font-size: 16px; margin: 0;">
+        Thank you for choosing <strong>Vubox</strong>!<br/>
+        We hope you enjoy the show! 🍿
+      </p>
+      <p style="font-size: 13px; color: #666; margin-top: 15px;">
+        This is an automated message. Please do not reply.
+      </p>
+    </div>
   </div>
 `;
-
 
 
       // Call sendEmail function to send the confirmation email
