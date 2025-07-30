@@ -103,55 +103,47 @@ const sendBookingConfirmationEmail = inngest.createFunction(
 
       // Prepare the email body with dynamic values from the booking
       const emailBody = `
-  <div style="font-family: Arial, sans-serif; line-height: 1.6; max-width: 600px; margin: auto; color: #333;">
-    <h2 style="color: #F84565;">Hi ${booking.user.name},</h2>
-
-    <p>
-      Great news! Your booking for 
-      <strong style="color: #F84565;">"${booking.show.movie.title}"</strong> 
-      has been successfully confirmed. 🎟️
-    </p>
-
-    <p>
-      Here are your booking details:
-    </p>
-
-    <div style="background-color: #f0f0f0; padding: 16px; border-left: 4px solid #F84565; margin: 20px 0;">
-      <p style="margin: 0;">
-        <strong>🎬 Movie:</strong> ${booking.show.movie.title}<br/>
-        <strong>📅 Date:</strong> ${new Date(
-          booking.show.showDateTime
-        ).toLocaleDateString("en-US", { timeZone: "Asia/Kolkata" })}<br/>
-        <strong>⏰ Time:</strong> ${new Date(
-          booking.show.showDateTime
-        ).toLocaleTimeString("en-US", { timeZone: "Asia/Kolkata" })}
-      </p>
+  <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; background: #f8f9fa; padding: 20px; color: #333;">
+    <div style="background: #7D3C98; color: white; padding: 30px 20px; border-radius: 10px 10px 0 0; text-align: center;">
+      <h1 style="margin: 0; font-size: 28px;">🎟️ VUBOX</h1>
+      <h2 style="margin: 10px 0;">Yaay!! Your Booking is Confirmed! 🎉</h2>
+      <p style="margin: 5px 0; font-size: 16px;">Booking ID: <strong>${booking.bookingId}</strong></p>
     </div>
 
-    <p>
-      Please arrive at the venue at least 15 minutes before the showtime. Bring your confirmation or ID for entry.
+    <div style="background: #fff3cd; border: 1px solid #ffeeba; padding: 20px; border-radius: 0 0 10px 10px;">
+      <div style="display: flex; flex-direction: row; gap: 15px;">
+        <img src="${booking.show.movie.posterUrl}" alt="${booking.show.movie.title}" style="width: 120px; height: auto; border-radius: 6px; object-fit: cover;" />
+        <div>
+          <h3 style="margin: 0 0 8px 0;">${booking.show.movie.title} (${booking.show.format})</h3>
+          <p style="margin: 0;">
+            <strong>🕒 Time:</strong> ${new Date(
+              booking.show.showDateTime
+            ).toLocaleTimeString("en-US", { timeZone: "Asia/Kolkata" })}<br/>
+            <strong>📅 Date:</strong> ${new Date(
+              booking.show.showDateTime
+            ).toLocaleDateString("en-US", { timeZone: "Asia/Kolkata", weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}<br/>
+            <strong>📍 Location:</strong> ${booking.show.theatre}, ${booking.show.city}<br/>
+            <strong>🪑 Seats:</strong> ${booking.seats.join(", ")}<br/>
+            <strong>🎬 Screen:</strong> ${booking.show.screen}
+          </p>
+        </div>
+      </div>
+
+      <div style="margin-top: 20px; text-align: center;">
+        <a  style="background-color: #7D3C98; color: white; text-decoration: none; padding: 12px 24px; border-radius: 5px; display: inline-block; font-weight: bold;">Open in App</a>
+      </div>
+    </div>
+
+    <p style="margin-top: 30px; font-size: 14px; color: #666; text-align: center;">
+      Thank you for booking with <strong>Vubox</strong>! We hope you enjoy the show! 🍿
     </p>
 
-    <p>
-      We hope you enjoy your movie experience with us! 🍿
-    </p>
-
-    <p>
-      Thank you for choosing <strong>QuickShow</strong>.<br/>
-      If you have any questions or need help, feel free to reach out.
-    </p>
-
-    <p style="margin-top: 30px;">
-      Warm regards,<br/>
-      — The QuickShow Team
-    </p>
-
-    <hr style="margin-top: 40px; border: none; border-top: 1px solid #ddd;" />
-    <p style="font-size: 12px; color: #888;">
-      This is an automated email. Please do not reply directly.
+    <p style="text-align: center; font-size: 12px; color: #aaa;">
+      This is an automated message. Please do not reply directly.
     </p>
   </div>
 `;
+
 
 
       // Call sendEmail function to send the confirmation email
