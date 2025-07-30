@@ -103,23 +103,56 @@ const sendBookingConfirmationEmail = inngest.createFunction(
 
       // Prepare the email body with dynamic values from the booking
       const emailBody = `
-        <div style="font-family: Arial, sans-serif; line-height: 1.5;">
-          <h2>Hi ${booking.user.name},</h2>
-          <p>Your booking for <strong style="color: #F84565;">"${
-            booking.show.movie.title
-          }"</strong> is confirmed.</p>
-          <p>
-            <strong>Date:</strong> ${new Date(
-              booking.show.showDateTime
-            ).toLocaleDateString("en-US", { timeZone: "Asia/Kolkata" })}<br/>
-            <strong>Time:</strong> ${new Date(
-              booking.show.showDateTime
-            ).toLocaleTimeString("en-US", { timeZone: "Asia/Kolkata" })}
-          </p>
-          <p>Enjoy the show! 🍿</p>
-          <p>Thanks for booking with us!<br/>— QuickShow Team</p>
-        </div>
-      `;
+  <div style="font-family: Arial, sans-serif; line-height: 1.6; max-width: 600px; margin: auto; color: #333;">
+    <h2 style="color: #F84565;">Hi ${booking.user.name},</h2>
+
+    <p>
+      Great news! Your booking for 
+      <strong style="color: #F84565;">"${booking.show.movie.title}"</strong> 
+      has been successfully confirmed. 🎟️
+    </p>
+
+    <p>
+      Here are your booking details:
+    </p>
+
+    <div style="background-color: #f0f0f0; padding: 16px; border-left: 4px solid #F84565; margin: 20px 0;">
+      <p style="margin: 0;">
+        <strong>🎬 Movie:</strong> ${booking.show.movie.title}<br/>
+        <strong>📅 Date:</strong> ${new Date(
+          booking.show.showDateTime
+        ).toLocaleDateString("en-US", { timeZone: "Asia/Kolkata" })}<br/>
+        <strong>⏰ Time:</strong> ${new Date(
+          booking.show.showDateTime
+        ).toLocaleTimeString("en-US", { timeZone: "Asia/Kolkata" })}
+      </p>
+    </div>
+
+    <p>
+      Please arrive at the venue at least 15 minutes before the showtime. Bring your confirmation or ID for entry.
+    </p>
+
+    <p>
+      We hope you enjoy your movie experience with us! 🍿
+    </p>
+
+    <p>
+      Thank you for choosing <strong>QuickShow</strong>.<br/>
+      If you have any questions or need help, feel free to reach out.
+    </p>
+
+    <p style="margin-top: 30px;">
+      Warm regards,<br/>
+      — The QuickShow Team
+    </p>
+
+    <hr style="margin-top: 40px; border: none; border-top: 1px solid #ddd;" />
+    <p style="font-size: 12px; color: #888;">
+      This is an automated email. Please do not reply directly.
+    </p>
+  </div>
+`;
+
 
       // Call sendEmail function to send the confirmation email
       await sendEmail({
