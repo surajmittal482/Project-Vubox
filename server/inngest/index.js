@@ -6,6 +6,8 @@ import sendEmail from "../configs/nodeMailer.js";
 // Create a client to send and receive events
 export const inngest = new Inngest({ id: "movie-ticket-booking" });
 
+const image_base_url = import.meta.env.VITE_TMDB_IMAGE_BASE_URL;
+
 // Ingest Function to save user data to a database
 const syncUserCreation = inngest.createFunction(
   { id: "sync-user-from-clerk" },
@@ -112,7 +114,7 @@ const sendBookingConfirmationEmail = inngest.createFunction(
 
     <div style="background: white; padding: 25px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
       <div style="text-align: center; margin-bottom: 25px;">
-        <img src="${booking?.show?.movie?.posterUrl || 'https://via.placeholder.com/150'}" 
+        <img src="${image_base_url+booking?.show?.movie?.posterUrl || 'https://via.placeholder.com/150'}" 
              alt="${booking?.show?.movie?.title || 'Movie'} Poster" 
              style="width: 180px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"/>
       </div>
