@@ -71,6 +71,7 @@ const fetchShows = async () => {
   try {
     const { data } = await axios.get('/api/show/all');
     if (data.success) {
+      console.log(data.shows);
       setShows(data.shows);
     } else {
       toast.error(data.message);

@@ -96,9 +96,13 @@ export const getShows = async (req, res) => {
       .sort({ showDateTime: 1 });
 
     // filter unique shows
-    const uniqueShows = new Set(shows.map(show => show.movie));
+    const uniqueShows = shows
+  .map(s => s.movie)
+  .filter((movie, index, self) =>
+    index === self.findIndex(m => m._id.toString() === movie._id.toString())
+  );
+res.json({ success: true, shows: uniqueShows });
 
-    res.json({ success: true, shows: Array.from(uniqueShows) });
   } catch (error) {
     console.error(error);
     res.json({ success: false, message: error.message });
